@@ -12,6 +12,7 @@ class Users(db.Model):  # extends db.Model to tell sqlalchemy that it's a table
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(64), nullable=False)
+    is_admin = db.Column(db.Boolean, nullable=False)
     #db.String(64) since you are storing the hexadecimal
     # representation of a SHA-256 hash, which is 64 characters long.
 
@@ -29,9 +30,10 @@ class Posts(db.Model):
 
 with app.app_context():
     db.create_all()
-    user_2 = Users(username="saar", password=hashlib.sha256("1234".encode()).hexdigest())
-    db.session.add(user_2)
-    db.session.commit()
+    # user_1 = Users(username="saar", password=hashlib.sha256("1234".encode()).hexdigest(), is_admin=True)
+    # user_2 = Users(username="elad", password=hashlib.sha256("1234".encode()).hexdigest(), is_admin=False)
+    # db.session.add(user_1, user_2)
+    # db.session.commit()
 
             #query data from db
     user = Users.query.filter_by(username="saar").first()
@@ -43,7 +45,9 @@ with app.app_context():
 @app.route("/")
 def index():
     if 'username' in session:
+        print(f"User {session['username']} is already in session")
         return redirect(url_for('view_and_publish_posts'))
+    print("User is not in session, redirecting to login")
     return redirect(url_for('login'))
 
 
@@ -101,7 +105,13 @@ def user_logout():
 
 @app.route('/posts', methods=['POST', 'GET'])
 def view_and_publish_posts():
-    user_id = Users.query.filter_by(username=session['username']).first().id
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    user = Users.query.filter_by(username=session['username']).first()
+    if user:
+        user_id = user.id
+    else:
+        print("User not found in DB")
     if request.method == 'POST':
         db.session.add(Posts(
             title=request.form['title'],
@@ -109,7 +119,7 @@ def view_and_publish_posts():
             user_id=user_id
         ))
         db.session.commit()
-        return redirect('/posts')
+        # return redirect('/posts')
     posts = Posts.query.all()
     return render_template('index.html', posts=posts)
 
