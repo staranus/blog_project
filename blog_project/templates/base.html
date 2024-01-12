@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}My Blog{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>My Blog</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+{#                {% if current_user.is_authenticated %}#}
+                    <li><a href="{{ url_for('index') }}">New Post</a></li>
+{#                {% endif %}#}
+            </ul>
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        &copy; 2023 My Blog
+    </footer>
+</body>
+</html>
