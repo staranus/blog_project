@@ -7,9 +7,7 @@
         <h1>Hello {{ session['username'] }}</h1>
         <nav>
             <ul>
-                <li><a href="{{ url_for('index') }}">Home</a></li>
-                    <li><a href="{{ url_for('index') }}">Write New Post</a></li>
-                    <li><a href="{{ url_for('user_logout') }}">Log out</a></li>
+                <li><a href="{{ url_for('user_logout') }}">Log out</a></li>
                 {% if not session['logged_in'] %}
                 <li><a href="{{ url_for('user_sign_up') }}">Sign-up</a></li>
                 <li><a href="{{ url_for('login') }}">Login</a></li>
@@ -37,11 +35,13 @@
     {% endif %}
         {% for post in posts %}
             <div class="post">
-                <h2>{{ post.id }}</h2>
+                <h2>{{ post.title }}</h2>
                 <p>{{ post.post }}</p>
                 <div class="post-actions">
+                    {% if current_user_id == post.user_id %}
                     <a href="{{ url_for('delete_post', id=post.id) }}">Delete</a>
                     <a href="/posts/edit/{{post.id}}">Edit</a>
+                    {% endif %}
                 </div>
             </div>
         {% endfor %}
