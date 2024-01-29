@@ -13,22 +13,70 @@
         <label for="usernameInput">Enter Username:</label>
         <input id="usernameInput" class="form-control" name="username" type="text" placeholder="Enter Username"
                required>
-        <label for="emailInput">Enter E-mail Address:</label>
-        <input id="emailInput" class="form-control" name="email_address" type="text" placeholder="E-mail address"
+        <label for="nicknameInput">Enter Nickname:</label>
+        <input id="nicknameInput" class="form-control" name="nickname" type="text" placeholder="Enter Nickname"
                required>
+        <span class="error-message"></span>
+        <label for="emailInput">Enter E-mail Address:</label>
+        <input id="emailInput" class="form-control" name="email_address" type="email" placeholder="E-mail address"
+               required>
+        <span class="error-message"></span>
         <label for="passwordInput">Enter Password:</label>
         <input id="passwordInput" class="form-control" name="password" type="password" placeholder="Enter Password"
                required>
-
+        <span class="error-message"></span>
         <label for="confirmPasswordInput">Confirm Password:</label>
         <input id="confirmPasswordInput" class="form-control" name="confirm_password" type="password"
                placeholder="Re-enter Password" required>
-
+        <span class="error-message"></span>
 
         <button type="submit" class="btn btn-success">Submit</button>
 
     </form>
 </div>
 
+<script>
+    // Get all input fields
+    const inputFields = document.querySelectorAll('input');
+
+    // Add event listeners to each input field
+    inputFields.forEach(input => {
+        input.addEventListener('blur', () => {
+            const errorMessage = input.nextElementSibling; // Get the error message element
+            errorMessage.textContent = ''; // Clear any existing error messages
+
+            // Perform validation based on the input type
+            switch (input.id) {
+                case 'usernameInput':
+                    if (input.value.trim() === '') {
+                        errorMessage.textContent = 'Username is required.';
+                    }
+                    break;
+                case 'emailInput':
+                    if (!validateEmail(input.value)) {
+                        errorMessage.textContent = 'Invalid email address.';
+                    }
+                    break;
+                case 'passwordInput':
+                    if (input.value.length < 8) {
+                        errorMessage.textContent = 'Password must be at least 8 characters long.';
+                    }
+                    break;
+                case 'confirmPasswordInput':
+                    if (input.value !== document.getElementById('passwordInput').value) {
+                        errorMessage.textContent = 'Passwords do not match.';
+                    }
+                    break;
+            }
+        });
+    });
+
+    // Function to validate email format
+    function validateEmail(email) {
+        // Regular expression for basic email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+</script>
 
 {% endblock %}
